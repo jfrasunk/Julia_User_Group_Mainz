@@ -22,7 +22,7 @@ In the following we will be using Julia version 1.10.3.
 
 2D diffusion with dirichlet boundary conditions and a source term
 
-![2D_diffusion](figures/2D_diffusion_10.png)
+![2D_diffusion](figures/2D_Diffusion_10.png)
 
 ## Strategy to Solve Forward Problem
 
@@ -61,7 +61,7 @@ q_i = D_i {T_{i+{1 \over 2}} ^{n+1} - T_{i-{1 \over 2}} ^{n+1} \over dx}
 ```
 
 ```math
-R_i = C_{i} ^{n+1} - C_{i} ^{n} - {\Delta t \over \Delta x ^2}(D_{i+{1 \over 2}}q_{i+{1 \over 2}} - D_{i-{1 \over 2}}q_{i-{1 \over 2}} - S)
+R_i = T_{i} ^{n+1} - T_{i} ^{n} - {\Delta t \over \Delta x ^2}(D_{i+{1 \over 2}}q_{i+{1 \over 2}} - D_{i-{1 \over 2}}q_{i-{1 \over 2}} - S)
 ```
 
 where n denotes the temporal coordinates and i the spatial coordinates. Note that we deploy a staggered grid, where the temperatures lie in the cell centers and the fluxes on the cell vertices. The 2D case looks as follows:
@@ -171,7 +171,7 @@ Note that we need to interpolate the diffusion coefficient from the cell centers
     Fvec .= [F_T[:];]
 ```
 
-As mentioned above, ```ForwardDiff.jl``` needs type of Vector{Float64} as an input, but currently we're passing a Vector{<:AbstractArray{H}}. The reason for doing so is that in the case one has more than one solution field, say $Vx$, $Vz$ and $P$ in 2D-Stokes, the fields can be extracted easily despite having different sizes. Therefore we utilize miltiple dispatch to define another $Res!$ function that takes ```U::Vector{Float64}``` 
+As mentioned above, ```ForwardDiff.jl``` needs type of ```Vector{Float64}``` as an input, but currently we're passing a ```Vector{<:AbstractArray{H}}```. The reason for doing so is that in the case one has more than one solution field, say $Vx$, $Vz$ and $P$ in 2D-Stokes, the fields can be extracted easily despite having different sizes. Therefore we utilize multiple dispatch to define another ```Res!``` function that takes ```U::Vector{Float64}``` 
 
 ```julia
 function Res!(
@@ -363,7 +363,7 @@ Combining these equations we arrive at the formulation:
 {dF \over dp} = - {\partial F \over \partial x} J ^{-1}{\partial R \over \partial p}
 ```
 
-By applying bracketing we can again see a linear system of equations analagous to  "$Ax=b$" which we will solve for $dF \over dp$. Here the adjoint parameter, $\lambda$ is now defined as:
+By applying bracketing we can again see a linear system of equations analagous to $Ax=b$ which we will solve for $dF \over dp$. Here the adjoint parameter, $\lambda$ is now defined as:
 
 ```math
 \lambda ^T = - {\partial F \over \partial x} J ^{-1}
@@ -527,7 +527,7 @@ function compute_λ(J_forward, ∇_F)
 end
 ```
 
-Then we calculate $\partial d \over \partial p$ 
+Then we calculate $\partial R \over \partial p$ 
 
 ```julia
 function dR_dp(Params_array, U, U_Tuple, Δ, N, N_params, BC, Params, Δt)
